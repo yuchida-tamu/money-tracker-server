@@ -1,11 +1,11 @@
 package main
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/yuchida-tamu/money-tracker-server/internal/db"
 	"github.com/yuchida-tamu/money-tracker-server/internal/record"
+	transportHttp "github.com/yuchida-tamu/money-tracker-server/internal/transport/http"
 )
 
 // Run - is going to be responsible for
@@ -27,22 +27,10 @@ func Run() error {
 
 	recordService := record.NewService(db)
 
-	recordService.PostRecord(
-		context.Background(),
-		record.Record{
-			ID: "6ba00572-c32a-11ec-9d64-0242ac120002",
-			DATE_CREATED: "2022-4-26",
-			AMOUNT: 1200,
-			CATEGORY: "food",
-			RECORD_DESCRIPTION: "ramen restaurant",
-			EXPENSE_TYPE: "expense",
-		},
-	)
-
-	fmt.Println(recordService.GetRecord(
-		context.Background(),
-		"6ba00572-c32a-11ec-9d64-0242ac120002",
-	))
+	httpHandler := transportHttp.NewHandler(recordService)
+	if err := httpHandler.Serve(); err != nil {
+		return err
+	}
 
 	return nil
 }
