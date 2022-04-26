@@ -12,8 +12,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type RecordService interface{}
-
 type Handler struct {
 	Router *mux.Router
 	Service RecordService
@@ -39,6 +37,13 @@ func (h* Handler) mapRoutes() {
 	h.Router.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request){
 		fmt.Fprintf(w, "Hello world")
 	})
+
+	h.Router.HandleFunc("/api/v1/record", h.PostRecord).Methods("POST")
+	h.Router.HandleFunc("/api/v1/record/{id}", h.GetRecord).Methods("GET")
+	h.Router.HandleFunc("/api/v1/record/{id}", h.UpdateRecord).Methods("PUT")
+	h.Router.HandleFunc("/api/v1/record/{id}", h.DeleteRecord).Methods("DELETE")
+	
+	
 }
 
 func (h *Handler) Serve() error {
