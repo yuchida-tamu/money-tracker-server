@@ -24,6 +24,10 @@ func NewHandler(service RecordService) *Handler{
 	}
 	h.Router = mux.NewRouter()
 	h.mapRoutes()
+	// use middlewares
+	h.Router.Use(JSONMiddleware)
+	h.Router.Use(LoggingMiddleware)
+	h.Router.Use(TimeoutMiddleware)
 
 	h.Server = &http.Server{
 		Addr: "0.0.0.0:8080",
@@ -38,7 +42,7 @@ func (h* Handler) mapRoutes() {
 		fmt.Fprintf(w, "Hello world")
 	})
 
-	h.Router.HandleFunc("/api/v1/record", h.PostRecord).Methods("POST")
+	h.Router.HandleFunc("/api/v1/record", JWTAuth(h.PostRecord)).Methods("POST")
 	h.Router.HandleFunc("/api/v1/record/{id}", h.GetRecord).Methods("GET")
 	h.Router.HandleFunc("/api/v1/record/{id}", h.UpdateRecord).Methods("PUT")
 	h.Router.HandleFunc("/api/v1/record/{id}", h.DeleteRecord).Methods("DELETE")
