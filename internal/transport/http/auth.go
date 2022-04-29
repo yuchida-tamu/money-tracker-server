@@ -18,7 +18,7 @@ func JWTAuth(
 			return
 		}
 
-		// Bearer: token-string
+		// Bearer: token-string, (in the Header, Request should have "Authorization", which is formatted as "bearer [encoded jwt key]")
 		authHeaderParts := strings.Split(authHeader[0], " ")
 		if len(authHeaderParts) != 2 || strings.ToLower(authHeaderParts[0]) != "bearer"{
 			http.Error(w, "not authorized", http.StatusUnauthorized)
